@@ -2,16 +2,22 @@ package letscode.catalizator.config;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import letscode.catalizator.domain.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 @Component
 public class JwtUtil {
     @Value("${jwt.secret}")
     private String secret;
+    @Value("${jwt.expiration}")
+    private String experationTime;
 
     public String extractUsername(String authToken) {
 
@@ -32,5 +38,22 @@ public class JwtUtil {
         return getClaimsFromToken(authToken)
                 .getExpiration()
                 .before(new Date());
+    }
+
+    public String generateToken(User user) {
+        HashMap<String, Object> claims = new HashMap<>();
+        claims.put("role", List.of(user.getRole()));
+
+        long experationSeconds = Long.parseLong(experationTime);
+        Date creationDate = new Date();
+        Date expirationDate = new Date(creationDate.getTime() + experationSeconds * 1000);
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(user.getUsername())
+                .setIssuedAt(creationDate)
+                .setExpiration(expirationDate)
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes()))
+                .compact();
     }
 }

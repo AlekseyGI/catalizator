@@ -27,6 +27,16 @@ public class User implements UserDetails {
     }
 
     @Override
+    public String getPassword() {
+        return null;
+    }
+
+    @Override
+    public String getUsername() {
+        return null;
+    }
+
+    @Override
     public boolean isAccountNonExpired() {
         return true;
     }
@@ -44,5 +54,10 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+// так просто создал, потому что красное в JwtUtil
+    public Object getRole() {
+        return role;
     }
 }
