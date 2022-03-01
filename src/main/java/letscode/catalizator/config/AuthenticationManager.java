@@ -44,7 +44,7 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
                     authorities
             );
 
-            return Mono.just(authentication);
+            return Mono.just(authenticationToken);
         } else {
             return Mono.empty();
         }

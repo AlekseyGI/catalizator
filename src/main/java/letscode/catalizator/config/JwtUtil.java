@@ -17,10 +17,9 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String secret;
     @Value("${jwt.expiration}")
-    private String experationTime;
+    private String expirationTime;
 
     public String extractUsername(String authToken) {
-
         return getClaimsFromToken(authToken)
                 .getSubject();
     }
@@ -37,16 +36,16 @@ public class JwtUtil {
     public boolean validateToken(String authToken) {
         return getClaimsFromToken(authToken)
                 .getExpiration()
-                .before(new Date());
+                .after(new Date());
     }
 
     public String generateToken(User user) {
         HashMap<String, Object> claims = new HashMap<>();
         claims.put("role", List.of(user.getRole()));
 
-        long experationSeconds = Long.parseLong(experationTime);
+        long expirationSeconds = Long.parseLong(expirationTime);
         Date creationDate = new Date();
-        Date expirationDate = new Date(creationDate.getTime() + experationSeconds * 1000);
+        Date expirationDate = new Date(creationDate.getTime() + expirationSeconds * 1000);
 
         return Jwts.builder()
                 .setClaims(claims)

@@ -10,10 +10,10 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 @Component
-class SecurityContextRepository implements ServerSecurityContextRepository {
+public class SecurityContextRepository implements ServerSecurityContextRepository {
     private final AuthenticationManager authenticationManager;
 
-    SecurityContextRepository(AuthenticationManager authenticationManager) {
+    public SecurityContextRepository(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
     }
 
@@ -28,14 +28,16 @@ class SecurityContextRepository implements ServerSecurityContextRepository {
                 .getHeaders()
                 .getFirst(HttpHeaders.AUTHORIZATION);
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")){
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String authToken = authHeader.substring(7);
 
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(authToken, authToken);
+            UsernamePasswordAuthenticationToken auth
+                    = new UsernamePasswordAuthenticationToken(authToken, authToken);
             return authenticationManager
                     .authenticate(auth)
                     .map(SecurityContextImpl::new);
         }
+
         return Mono.empty();
     }
 }

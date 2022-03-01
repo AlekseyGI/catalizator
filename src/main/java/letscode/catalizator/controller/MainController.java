@@ -25,7 +25,6 @@ public class MainController {
         return messageService.list();
     }
 
-
     @PostMapping
     public Mono<Message> add(@RequestBody Message message) {
         return messageService.addOne(message);
